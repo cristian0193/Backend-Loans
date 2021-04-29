@@ -1,0 +1,15 @@
+{
+    "TOKEN_EXPIRED":"Su token ha expirado",
+    "SIGNATURE_MATCH":"La firma del token no coincide",
+    "INVALID_TOKEN":"Su token no es valido",
+    "CREATED":  "Creación exitosa",
+    "UPDATED":  "Actualización exitosa",
+    "DELETE":"Eliminación exitosa",
+    "NOT_FOUND_PRODUCT":"Productos no encontrados",
+    "BODY_INVALID":"Cuerpo de petición no valido",
+    "NOT_FOUND_QUERY_NAME":"Parametro 'name' es obligatorio",
+    "NOT_FOUND_QUERY_PRICE":"Parametro 'price' es obligatorio",
+    "NOT_FOUND_QUERY_IDCATEGORY":"Parametro 'id_category' es obligatorio"
+}
+   
+   

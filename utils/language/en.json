@@ -1,0 +1,13 @@
+{
+    "TOKEN_EXPIRED":"Your token has expired",
+    "SIGNATURE_MATCH":"Token signature does not match",
+    "INVALID_TOKEN":"Your token is not valid",
+    "CREATED":  "Successful creation",
+    "UPDATED":  "Successful update",
+    "DELETE":"Successful delete",
+    "NOT_FOUND_PRODUCT":"Products not found",
+    "BODY_INVALID":"Invalid request body",
+    "NOT_FOUND_QUERY_NAME":"Parameter 'name' is required",
+    "NOT_FOUND_QUERY_PRICE":"Parameter 'price' is required",
+    "NOT_FOUND_QUERY_IDCATEGORY":"Parameter 'id_category' is required"
+}

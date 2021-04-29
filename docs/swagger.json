@@ -1,0 +1,159 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Product",
+    "description": "Api de registro de gestion de productos para market",
+    "contact": {
+      "name": "Christian Rodriguez",
+      "email": "cristian010193@gmail.com"
+    },
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Localhost"
+    }
+  ],
+  "tags": [
+    {
+      "name": "ProductController",
+      "description": "Controlador para la gestion de productos"
+    }
+  ],
+  "paths": {
+    "/product": {
+      "get": {
+        "tags": [
+          "ProductController"
+        ],
+        "summary": "Retorna un listado de los productos segun su id de market",
+        "description": "",
+        "operationId": "Get",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Lang",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Id-Market",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "ProductDto": {
+        "required": [
+          "id",
+          "name",
+          "price",
+          "id_categoria"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Código de identificación"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre del producto"
+          },
+          "price": {
+            "type": "number",
+            "description": "Precio del producto"
+          },
+          "id_categoria": {
+            "type": "number",
+            "description": "Categoria a la que pertenece el producto"
+          }
+        }
+      },
+      "Response": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Código del estado"
+          },
+          "message": {
+            "type": "string",
+            "description": "Es el mensaje a mostrar en el front y por lo tanto dependiendo del lenguaje se visualizará"
+          },
+          "description": {
+            "type": "string",
+            "description": "Descripción del estado si fue un error se incluira en este atributo"
+          }
+        }
+      }
+    }
+  }
+}
