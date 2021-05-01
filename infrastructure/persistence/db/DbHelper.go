@@ -12,8 +12,8 @@ import (
 )
 
 type DbHelper struct {
-	ProductRepository repository.ProductRepository
-	db                *gorm.DB
+	LoansRepository repository.LoansRepository
+	db              *gorm.DB
 }
 
 func InitDbHelper() (*DbHelper, error) {
@@ -38,8 +38,8 @@ func InitDbHelper() (*DbHelper, error) {
 	db.LogMode(true)
 	db.AutoMigrate()
 	return &DbHelper{
-		ProductRepository: persistence.InitProductRepositoryImpl(db),
-		db:                db,
+		LoansRepository: persistence.InitLoansRepositoryImpl(db),
+		db:              db,
 	}, nil
 }
 
@@ -48,5 +48,5 @@ func (s *DbHelper) Close() error {
 }
 
 func (s *DbHelper) Automigrate() error {
-	return s.db.AutoMigrate(&entity.Product{}).Error
+	return s.db.AutoMigrate(&entity.Loans{}).Error
 }

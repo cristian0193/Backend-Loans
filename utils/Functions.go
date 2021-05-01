@@ -1,38 +1,18 @@
 package utils
 
 import (
-	"crypto/rand"
 	"math"
 	"net/http"
 	"reflect"
-	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
-
-	"gopkg.in/jeevatkm/go-model.v1"
 )
 
 const otpChars = "1234567890"
 
 func StatusText(code int) string {
 	return http.StatusText(code)
-}
-
-func GenerateCodeVerification(length int) (string, error) {
-	buffer := make([]byte, length)
-	_, err := rand.Read(buffer)
-	if err != nil {
-		return "", err
-	}
-
-	otpCharsLength := len(otpChars)
-	for i := 0; i < length; i++ {
-		buffer[i] = otpChars[int(buffer[i])%otpCharsLength]
-	}
-
-	return string(buffer), nil
 }
 
 func GenerateDateExpirationCode(tiempo int) int64 {
@@ -102,44 +82,4 @@ func GetDateWithTimeToString(date string) string {
 
 func ABS(number int) int {
 	return int(math.Abs(float64(number)))
-}
-
-func RemoveHtmlTag(in string) string {
-	const pattern = `(<\/?[a-zA-A]+?[^>]*\/?>)*`
-	r := regexp.MustCompile(pattern)
-	groups := r.FindAllString(in, -1)
-	sort.Slice(groups, func(i, j int) bool {
-		return len(groups[i]) > len(groups[j])
-	})
-	for _, group := range groups {
-		if strings.TrimSpace(group) != "" {
-			in = strings.ReplaceAll(in, group, "")
-		}
-	}
-	return in
-}
-
-func FilterQueryParameters(structDefination interface{}) string {
-
-	valueStruct := reflect.ValueOf(structDefination).Elem()
-
-	var queryParams string
-
-	for index := 0; index < valueStruct.NumField(); index++ {
-		valueField := valueStruct.Field(index)
-		typeField := valueStruct.Type().Field(index)
-
-		valueInterface := valueField.Interface()
-		value := reflect.ValueOf(valueInterface)
-
-		if value.String() != "" {
-			tag, _ := model.Tag(structDefination, typeField.Name)
-			queryParams += tag.Get("json") + " = '" + value.String() + "' AND "
-		}
-	}
-
-	if queryParams == "" {
-		return ""
-	}
-	return queryParams[:len(queryParams)-4]
 }
