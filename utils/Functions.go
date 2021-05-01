@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"Backend-Loans/domain/dto"
 	"math"
 	"net/http"
 	"reflect"
@@ -10,6 +11,8 @@ import (
 )
 
 const otpChars = "1234567890"
+
+var responseDto = dto.Response{}
 
 func StatusText(code int) string {
 	return http.StatusText(code)
@@ -82,4 +85,22 @@ func GetDateWithTimeToString(date string) string {
 
 func ABS(number int) int {
 	return int(math.Abs(float64(number)))
+}
+
+func ResponseError(code int, err error) dto.Response {
+	if err != nil {
+		responseDto.Status = code
+		responseDto.Description = StatusText(code)
+		responseDto.Message = err.Error()
+		return responseDto
+	}
+	responseDto.Status = http.StatusOK
+	return responseDto
+}
+
+func ResponseValidation(code int, headers dto.Headers, message string) dto.Response {
+	responseDto.Status = code
+	responseDto.Description = StatusText(code)
+	responseDto.Message = Lenguage(headers.Lenguage, message)
+	return responseDto
 }

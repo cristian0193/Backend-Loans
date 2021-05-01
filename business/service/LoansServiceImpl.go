@@ -11,8 +11,10 @@ import (
 )
 
 type LoansServiceImpl struct {
-	loansRepository repository.LoansRepository
-	errorResponse   errorException.ErrorResponse
+	loansRepository     repository.LoansRepository
+	paymentsRepository  repository.PaymentsRepository
+	interestsRepository repository.InterestsRepository
+	errorResponse       errorException.ErrorResponse
 }
 
 func InitLoansServiceImpl() *LoansServiceImpl {
@@ -21,26 +23,92 @@ func InitLoansServiceImpl() *LoansServiceImpl {
 		log.Fatal(err.Error())
 	}
 	return &LoansServiceImpl{
-		loansRepository: dbHelper.LoansRepository,
+		loansRepository:     dbHelper.LoansRepository,
+		paymentsRepository:  dbHelper.PaymentsRepository,
+		interestsRepository: dbHelper.InterestsRepository,
 	}
 }
 
 func (a *LoansServiceImpl) CreateLoan(loansDto dto.LoansDto, headers dto.Headers) dto.Response {
-	var responseDto = dto.Response{}
 
-	err := a.loansRepository.Insert(loansDto, headers)
-
-	if err != nil {
-		responseDto.Status = http.StatusBadRequest
-		responseDto.Description = utils.StatusText(http.StatusBadRequest)
-		responseDto.Message = err.Error()
-		return responseDto
+	result, err := a.loansRepository.FindUserByUser(loansDto.IdentificationClient)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
 	}
 
-	responseDto.Status = http.StatusCreated
-	responseDto.Description = utils.StatusText(http.StatusCreated)
-	responseDto.Message = utils.Lenguage(headers.Lenguage, "CREATED")
-	return responseDto
+	if result != false {
+		return utils.ResponseValidation(http.StatusNotFound, headers, "USER_EXIST")
+	}
+
+	id, err := a.loansRepository.Insert(loansDto)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
+	}
+
+	var payment = dto.PaymentDto{IdLoan: id, IdType: 1, Balance: loansDto.BorrowedValue}
+
+	err = a.paymentsRepository.Insert(payment)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
+	}
+
+	var calculate = (loansDto.BorrowedValue) * (loansDto.InterestPercentage / 100)
+	var interest = dto.InterestsDto{IdLoan: id, Status: "ACT", Share: calculate}
+
+	err = a.interestsRepository.Insert(interest)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
+	}
+
+	return utils.ResponseValidation(http.StatusCreated, headers, "CREATED")
+}
+
+func (a *LoansServiceImpl) CreatePayment(paymentDto dto.PaymentDto, headers dto.Headers) dto.Response {
+
+	balance, err := a.paymentsRepository.FindLastBalance(paymentDto.IdLoan)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
+	}
+
+	err = a.paymentsRepository.Insert(paymentDto)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
+	}
+
+	lastBalance, err := a.paymentsRepository.FindLastBalance(paymentDto.IdLoan)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
+	}
+
+	if paymentDto.Interest > 0 {
+		err = a.paymentsRepository.UpdateBalance(lastBalance.Id, balance.Balance)
+		if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+			return response
+		}
+	}
+
+	if paymentDto.Capital > 0 {
+		var calculteBalance = (balance.Balance - paymentDto.Capital)
+		err = a.paymentsRepository.UpdateBalance(lastBalance.Id, calculteBalance)
+		if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+			return response
+		}
+
+		err = a.interestsRepository.UpdateStateAllInterestByIdLoan(paymentDto.IdLoan)
+		if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+			return response
+		}
+
+		var newShare = calculteBalance * (lastBalance.InterestPercentage / 100)
+		var interest = dto.InterestsDto{IdLoan: paymentDto.IdLoan, Status: "ACT", Share: newShare}
+
+		err = a.interestsRepository.Insert(interest)
+		if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+			return response
+		}
+	}
+
+	return utils.ResponseValidation(http.StatusCreated, headers, "CREATED")
 }
 
 /*  func (a *ProductServiceImpl) UpdateProduct(productDto dto.ProductDto, headers dto.Headers) dto.Response {

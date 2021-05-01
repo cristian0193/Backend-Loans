@@ -42,8 +42,8 @@ CREATE TABLE "Clients" (
 	mobile varchar(10) NOT NULL
 );
 
-/****** Object:  Table [Historial] ******/
-CREATE TABLE "Historial" (
+/****** Object:  Table [Payments] ******/
+CREATE TABLE "Payments" (
 	id SERIAL PRIMARY KEY,
 	id_loan int4 NOT NULL,
 	capital numeric NOT NULL,
@@ -56,13 +56,13 @@ CREATE TABLE "Historial" (
 /****** Object:  Table [Interests] ******/
 CREATE TABLE "Interests" (
 	id SERIAL PRIMARY KEY,
-	identification_client int4 NOT NULL,
+	id_loan int4 NOT NULL,
 	share numeric NOT NULL,
 	status varchar(3) NOT NULL
 );
 
 alter table "Loans" add constraint FK_loand_status foreign key (id_status) references "Status"(id);
 alter table "Loans" add constraint FK_loand_clients foreign key (identification_client) references "Clients"(identification);
-alter table "Historial" add constraint FK_historial_loans foreign key (id_loan) references "Loans"(id);
-alter table "Historial" add constraint FK_historial_types foreign key (id_type) references "Types"(id);
-alter table "Interests" add constraint FK_interests_client foreign key (identification_client) references "Clients"(identification);
+alter table "Payments" add constraint FK_payments_loans foreign key (id_loan) references "Loans"(id);
+alter table "Payments" add constraint FK_payments_types foreign key (id_type) references "Types"(id);
+alter table "Interests" add constraint FK_interests_loans foreign key (id_loan) references "Loans"(id);

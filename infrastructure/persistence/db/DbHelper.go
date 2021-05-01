@@ -12,8 +12,10 @@ import (
 )
 
 type DbHelper struct {
-	LoansRepository repository.LoansRepository
-	db              *gorm.DB
+	LoansRepository     repository.LoansRepository
+	PaymentsRepository  repository.PaymentsRepository
+	InterestsRepository repository.InterestsRepository
+	db                  *gorm.DB
 }
 
 func InitDbHelper() (*DbHelper, error) {
@@ -25,7 +27,9 @@ func InitDbHelper() (*DbHelper, error) {
 	var dbname = utils.GetStrEnv("DB_NAME")
 	var drive = utils.GetStrEnv("DB_DRIVER")
 
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require",
+	/* psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require",
+	host, port, user, password, dbname) */
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	db, err := gorm.Open(drive, psqlInfo)
 
@@ -38,8 +42,10 @@ func InitDbHelper() (*DbHelper, error) {
 	db.LogMode(true)
 	db.AutoMigrate()
 	return &DbHelper{
-		LoansRepository: persistence.InitLoansRepositoryImpl(db),
-		db:              db,
+		LoansRepository:     persistence.InitLoansRepositoryImpl(db),
+		PaymentsRepository:  persistence.InitPaymentsRepositoryImpl(db),
+		InterestsRepository: persistence.InitInterestsRepositoryImpl(db),
+		db:                  db,
 	}, nil
 }
 
@@ -48,5 +54,5 @@ func (s *DbHelper) Close() error {
 }
 
 func (s *DbHelper) Automigrate() error {
-	return s.db.AutoMigrate(&entity.Loans{}).Error
+	return s.db.AutoMigrate(&entity.Loans{}, &entity.Payments{}, &entity.Interests{}).Error
 }

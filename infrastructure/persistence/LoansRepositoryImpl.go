@@ -17,7 +17,7 @@ func InitLoansRepositoryImpl(db *gorm.DB) *LoansRepositoryImpl {
 	return &LoansRepositoryImpl{db}
 }
 
-func (repo *LoansRepositoryImpl) Insert(loansDto dto.LoansDto, headers dto.Headers) error {
+func (repo *LoansRepositoryImpl) Insert(loansDto dto.LoansDto) (int32, error) {
 
 	var loans = entity.Loans{}
 
@@ -27,9 +27,42 @@ func (repo *LoansRepositoryImpl) Insert(loansDto dto.LoansDto, headers dto.Heade
 
 	err := repo.db.Create(&loans).Error
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return loans.Id, nil
+}
+
+func (repo *LoansRepositoryImpl) FindUserByUser(identification int32) (bool, error) {
+
+	var loans = []entity.Loans{}
+
+	err := repo.db.Where("identification_client = ? and ((id_status = 2) or (id_status = 3))", identification).
+		Find(&loans).Error
+
+	if err != nil {
+		return false, err
+	}
+
+	if len(loans) > 0 {
+		return true, err
+	}
+
+	return false, nil
+}
+
+func (repo *LoansRepositoryImpl) FindUserById(id int32) (entity.Loans, error) {
+
+	var loans = entity.Loans{}
+
+	err := repo.db.Where("id = ?", id).Find(&loans).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return loans, nil
+	}
+
+	if err != nil {
+		return loans, err
+	}
+	return loans, nil
 }
 
 /* func (repo *LoansRepositoryImpl) GetByIdMarket(headers dto.Headers) ([]entity.Product, error) {

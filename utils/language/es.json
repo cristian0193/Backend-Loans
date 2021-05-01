@@ -1,5 +1,6 @@
 {
     "CREATED":  "Creación exitosa",
     "UPDATED":  "Actualización exitosa",
-    "DELETE":"Eliminación exitosa"
+    "DELETE":   "Eliminación exitosa",
+    "USER_EXIST":   "El usuario presenta un prestamos en estado pendiente o en mora"
 }
