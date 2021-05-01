@@ -53,7 +53,16 @@ CREATE TABLE "Historial" (
 	id_type int4 NOT NULL
 );
 
+/****** Object:  Table [Interests] ******/
+CREATE TABLE "Interests" (
+	id SERIAL PRIMARY KEY,
+	identification_client int4 NOT NULL,
+	share numeric NOT NULL,
+	status varchar(3) NOT NULL
+);
+
 alter table "Loans" add constraint FK_loand_status foreign key (id_status) references "Status"(id);
 alter table "Loans" add constraint FK_loand_clients foreign key (identification_client) references "Clients"(identification);
 alter table "Historial" add constraint FK_historial_loans foreign key (id_loan) references "Loans"(id);
 alter table "Historial" add constraint FK_historial_types foreign key (id_type) references "Types"(id);
+alter table "Interests" add constraint FK_interests_client foreign key (identification_client) references "Clients"(identification);
