@@ -22,6 +22,7 @@ func InitLoansController(router *gin.Engine) {
 	}
 	router.POST("/loans", loansRepository.CreateLoansHandler)
 	router.POST("/loans/payment", loansRepository.CreatePaymentHandler)
+	router.GET("/loans", loansRepository.FindAllHandler)
 }
 
 func HeadersParamLoans(c *gin.Context) dto.Headers {
@@ -71,6 +72,18 @@ func (a *LoansController) CreatePaymentHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusAccepted, response)
+}
+
+func (a *LoansController) FindAllHandler(c *gin.Context) {
+	var headers = HeadersParamLoans(c)
+
+	loans, response := a.loansService.FindAllLoans(headers)
+
+	if response.Status != http.StatusOK {
+		c.JSON(response.Status, response)
+		return
+	}
+	c.JSON(http.StatusAccepted, loans)
 }
 
 /* func (p *LoansController) GetAllProductHandler(c *gin.Context) {

@@ -108,7 +108,41 @@ func (a *LoansServiceImpl) CreatePayment(paymentDto dto.PaymentDto, headers dto.
 		}
 	}
 
+	err = a.loansRepository.UpdateCalculateById(paymentDto.IdLoan)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
+	}
+
 	return utils.ResponseValidation(http.StatusCreated, headers, "CREATED")
+}
+
+func (a *LoansServiceImpl) FindAllLoans(headers dto.Headers) ([]dto.ListLoansDto, dto.Response) {
+
+	var listLoans = make([]dto.ListLoansDto, 0)
+	var responseDto = dto.Response{}
+
+	loans, err := a.loansRepository.FindAllLoans()
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return listLoans, response
+	}
+
+	for _, loan := range loans {
+		var listLoansDto = dto.ListLoansDto{
+			Id:            loan.Id,
+			Client:        loan.Client.Identification,
+			Name:          loan.Client.FullName,
+			BorrowedValue: loan.BorrowedValue,
+			PaidValue:     loan.PaidValue,
+			PendingValue:  loan.PendingValue,
+			InterestPaid:  loan.InterestPaid,
+			IdStatus:      loan.IdStatus,
+		}
+
+		listLoans = append(listLoans, listLoansDto)
+	}
+
+	responseDto.Status = http.StatusOK
+	return listLoans, responseDto
 }
 
 /*  func (a *ProductServiceImpl) UpdateProduct(productDto dto.ProductDto, headers dto.Headers) dto.Response {

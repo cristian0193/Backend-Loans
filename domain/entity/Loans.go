@@ -10,9 +10,9 @@ type Loans struct {
 	PaidValue            float32   `gorm:"TYPE:NUMERIC;NOT NULL;COLUMN:paid_value" json:"paid_value"`
 	PendingValue         float32   `gorm:"TYPE:NUMERIC;NOT NULL;COLUMN:pending_value" json:"pending_value"`
 	InterestPaid         float32   `gorm:"TYPE:NUMERIC;NOT NULL;COLUMN:interest_paid" json:"interest_paid"`
-	MonthsArrears        int       `gorm:"TYPE:INT4;NOT NULL;COLUMN:months_arrears" json:"months_arrears"`
 	IdStatus             int       `gorm:"TYPE:INT4;NOT NULL;COLUMN:id_status" json:"id_status"`
 	CreationDate         time.Time `gorm:"TYPE:DATE;NOT NULL;COLUMN:creation_date" json:"creation_date"`
+	Client               Clients   `gorm:"ForeignKey:identification_client;AssociationForeignKey:identification" json:"client"`
 }
 
 func (Loans) TableName() string {

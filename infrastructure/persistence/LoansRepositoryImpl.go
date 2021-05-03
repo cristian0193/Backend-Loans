@@ -65,6 +65,51 @@ func (repo *LoansRepositoryImpl) FindUserById(id int32) (entity.Loans, error) {
 	return loans, nil
 }
 
+func (repo *LoansRepositoryImpl) UpdateCalculateById(id int32) error {
+
+	var query = `UPDATE public."Loans"
+	SET  paid_value=(SELECT sum(p.capital) 
+					 FROM "Payments" p 
+					 WHERE p.id_loan = ?), 
+		 pending_value=(SELECT ((l.borrowed_value) - sum(p.capital)) as pending
+						FROM "Loans" l
+						INNER JOIN "Payments" p on l.id = p.id_loan
+						WHERE p.id_loan = ?
+						GROUP BY l.id), 
+		 interest_paid=(SELECT sum(p.interest) 
+						 FROM "Payments" p 
+						 WHERE p.id_loan = ?), 
+		 id_status=(SELECT 
+						CASE WHEN l.borrowed_value = sum(p.capital) THEN 1
+							 ELSE 2
+						END
+					FROM "Loans" l
+					INNER JOIN "Payments" p on l.id = p.id_loan
+					WHERE p.id_loan = ?
+					GROUP BY l.id)
+	WHERE id=?;`
+
+	err := repo.db.Exec(query, id, id, id, id, id).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo *LoansRepositoryImpl) FindAllLoans() ([]entity.Loans, error) {
+	var loans = []entity.Loans{}
+
+	err := repo.db.Preload("Client").Find(&loans).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return loans, nil
+	}
+
+	if err != nil {
+		return loans, err
+	}
+	return loans, nil
+}
+
 /* func (repo *LoansRepositoryImpl) GetByIdMarket(headers dto.Headers) ([]entity.Product, error) {
 
 	var product = []entity.Product{}

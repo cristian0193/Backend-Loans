@@ -29,7 +29,6 @@ CREATE TABLE "Loans" (
 	paid_value numeric NOT NULL,
 	pending_value numeric NOT NULL,
 	interest_paid numeric NOT NULL,
-	months_arrears int4 NOT NULL,
 	id_status int4 NOT NULL,
 	creation_date date NOT NULL
 );
