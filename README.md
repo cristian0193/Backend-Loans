@@ -1,8 +1,8 @@
-# WS - Product
+# Backend - System Loans
 Product service example for baseline in golang
 
 # Start 🚀
-    1. Clone this project -> https://github.com/cristian0193/ws-baseline-golang.git
+    1. Clone this project -> https://github.com/cristian0193/Backend-Loans.git
     2. Make sure port 8080.
     3. go get all 
     4. go run main.go
@@ -50,12 +50,9 @@ WS_BaseLine_Golang
     - Visual Studio Code
 
 # Endpoints
-    - GET    /product
-    - POST   /product
-    - PUT    /product
-    - DELETE /product/:idProduct
-    - GET    /product/:idProduct
-    - GET    /products/parameters
+    - GET    /loans
+    - POST   /loans
+    - POST   /loans/payment
 
 # Authors
 Christian Rodriguez
