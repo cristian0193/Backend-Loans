@@ -22,15 +22,15 @@ func GenerateDateExpirationCode(tiempo int) int64 {
 	return time.Now().Add(time.Minute * time.Duration(tiempo)).Unix()
 }
 
-func IsInt(number string) bool {
+func ConvertInt32(number string) int32 {
 	if number != "" {
-		_, err := strconv.Atoi(number)
+		value, err := strconv.Atoi(number)
 		if err != nil {
-			return false
+			return 0
 		}
-		return true
+		return int32(value)
 	}
-	return false
+	return 0
 }
 
 func GetInt(number string) int {

@@ -10,6 +10,7 @@ type Payments struct {
 	Balance     float32   `gorm:"TYPE:NUMERIC;NOT NULL;COLUMN:balance" json:"balance"`
 	PaymentDate time.Time `gorm:"TYPE:DATE;NOT NULL;COLUMN:payment_date" json:"payment_date"`
 	IdType      int       `gorm:"TYPE:INT4;NOT NULL;COLUMN:id_type" json:"id_type"`
+	Type        Types     `gorm:"ForeignKey:id_type;AssociationForeignKey:id" json:"type"`
 }
 
 func (Payments) TableName() string {

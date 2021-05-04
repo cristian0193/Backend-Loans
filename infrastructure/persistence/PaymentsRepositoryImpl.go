@@ -58,3 +58,14 @@ func (repo *PaymentsRepositoryImpl) FindLastBalance(idLoan int32) (dto.LastBalan
 	}
 	return lastBalance, nil
 }
+
+func (repo *PaymentsRepositoryImpl) FindByIdLoan(idLoan int32) ([]entity.Payments, error) {
+
+	var payment = []entity.Payments{}
+
+	err := repo.db.Where("id_loan = ?", idLoan).Preload("Type").Find(&payment).Error
+	if err != nil {
+		return payment, err
+	}
+	return payment, nil
+}

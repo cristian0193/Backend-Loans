@@ -54,5 +54,5 @@ func (s *DbHelper) Close() error {
 }
 
 func (s *DbHelper) Automigrate() error {
-	return s.db.AutoMigrate(&entity.Loans{}, &entity.Payments{}, &entity.Interests{}).Error
+	return s.db.AutoMigrate(&entity.Loans{}, &entity.Payments{}, &entity.Interests{}, &entity.Types{}).Error
 }

@@ -23,6 +23,7 @@ func InitLoansController(router *gin.Engine) {
 	router.POST("/loans", loansRepository.CreateLoansHandler)
 	router.POST("/loans/payment", loansRepository.CreatePaymentHandler)
 	router.GET("/loans", loansRepository.FindAllHandler)
+	router.GET("/loans/historial/:idLoan", loansRepository.FindByIdLoanHandler)
 }
 
 func HeadersParamLoans(c *gin.Context) dto.Headers {
@@ -84,6 +85,19 @@ func (a *LoansController) FindAllHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusAccepted, loans)
+}
+
+func (a *LoansController) FindByIdLoanHandler(c *gin.Context) {
+	var headers = HeadersParamLoans(c)
+	var idLoan = utils.ConvertInt32(c.Param("idLoan"))
+
+	payments, response := a.loansService.FindByIdLoan(idLoan, headers)
+
+	if response.Status != http.StatusOK {
+		c.JSON(response.Status, response)
+		return
+	}
+	c.JSON(http.StatusAccepted, payments)
 }
 
 /* func (p *LoansController) GetAllProductHandler(c *gin.Context) {

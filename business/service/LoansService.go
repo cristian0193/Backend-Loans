@@ -8,4 +8,5 @@ type LoansService interface {
 	CreateLoan(loansDto dto.LoansDto, headers dto.Headers) dto.Response
 	CreatePayment(paymentDto dto.PaymentDto, headers dto.Headers) dto.Response
 	FindAllLoans(headers dto.Headers) ([]dto.ListLoansDto, dto.Response)
+	FindByIdLoan(idLoan int32, headers dto.Headers) ([]dto.ListPaymentDto, dto.Response)
 }
