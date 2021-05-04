@@ -24,7 +24,7 @@ func InitLoansController(router *gin.Engine) {
 	router.POST("/loans/payment", loansRepository.CreatePaymentHandler)
 	router.GET("/loans", loansRepository.FindAllHandler)
 	router.GET("/loans/historial/:idLoan", loansRepository.FindByIdLoanHandler)
-	router.GET("/loans/information/client/:idLoan", loansRepository.FindInformationLoanHandler)
+	router.GET("/loans/information/:idLoan", loansRepository.FindInformationLoanHandler)
 }
 
 func HeadersParamLoans(c *gin.Context) dto.Headers {
