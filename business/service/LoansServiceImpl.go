@@ -173,141 +173,32 @@ func (a *LoansServiceImpl) FindByIdLoan(idLoan int32, headers dto.Headers) ([]dt
 	return listPayment, responseDto
 }
 
-/*  func (a *ProductServiceImpl) UpdateProduct(productDto dto.ProductDto, headers dto.Headers) dto.Response {
+func (a *LoansServiceImpl) FindInformacionByLoan(idLoan int32, headers dto.Headers) (dto.InformacionUserDto, dto.Response) {
+
+	var listInformacionUserDto = dto.InformacionUserDto{}
 	var responseDto = dto.Response{}
 
-	err := a.productRepository.Update(productDto, headers)
-
-	if err != nil {
-		responseDto.Status = http.StatusBadRequest
-		responseDto.Description = utils.StatusText(http.StatusBadRequest)
-		responseDto.Message = err.Error()
-		return responseDto
+	userInformation, err := a.loansRepository.FindInformacionByIdLoan(idLoan)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return listInformacionUserDto, response
 	}
 
-	responseDto.Status = http.StatusCreated
-	responseDto.Description = utils.StatusText(http.StatusCreated)
-	responseDto.Message = utils.Lenguage(headers.Lenguage, "UPDATED")
-	return responseDto
-}
+	arrears := utils.ResultCalculateMonthsArrears(userInformation.CreationDate, userInformation.State.Id)
 
-func (a *ProductServiceImpl) GetByIdMarketProduct(headers dto.Headers) (dto.Response, []dto.ProductDto) {
-	var responseDto = dto.Response{}
-	var listProductDto = make([]dto.ProductDto, 0)
-
-	products, err := a.productRepository.GetByIdMarket(headers)
-	if err != nil {
-		responseDto.Status = http.StatusBadRequest
-		responseDto.Description = utils.StatusText(http.StatusBadRequest)
-		responseDto.Message = err.Error()
-		return responseDto, listProductDto
-	}
-
-	if len(products) == 0 || headers.IdMarket == "" {
-		responseDto.Status = http.StatusNotFound
-		responseDto.Description = utils.StatusText(http.StatusNotFound)
-		responseDto.Message = utils.Lenguage(headers.Lenguage, "NOT_FOUND_PRODUCT")
-		return responseDto, listProductDto
-	}
-
-	for _, product := range products {
-		var productDto = dto.ProductDto{}
-		model.Copy(&productDto, product)
-		listProductDto = append(listProductDto, productDto)
+	listInformacionUserDto = dto.InformacionUserDto{
+		Id:             userInformation.Id,
+		Identification: userInformation.IdentificationClient,
+		FullName:       userInformation.Client.FullName,
+		Address:        userInformation.Client.Address,
+		Mobile:         userInformation.Client.Mobile,
+		BorrowedValue:  userInformation.BorrowedValue,
+		Interest:       userInformation.InterestPercentage,
+		MonthlyFee:     userInformation.Interest.Share,
+		LoanDate:       userInformation.CreationDate,
+		MonthsArrears:  arrears,
+		State:          userInformation.State.Description,
 	}
 
 	responseDto.Status = http.StatusOK
-	return responseDto, listProductDto
+	return listInformacionUserDto, responseDto
 }
-
-func (a *ProductServiceImpl) DeleteProduct(idProduct string, headers dto.Headers) dto.Response {
-	var responseDto = dto.Response{}
-
-	err := a.productRepository.Delete(idProduct, headers)
-
-	if err != nil {
-		responseDto.Status = http.StatusBadRequest
-		responseDto.Description = utils.StatusText(http.StatusBadRequest)
-		responseDto.Message = err.Error()
-		return responseDto
-	}
-
-	responseDto.Status = http.StatusOK
-	responseDto.Description = utils.StatusText(http.StatusOK)
-	responseDto.Message = utils.Lenguage(headers.Lenguage, "DELETE")
-	return responseDto
-}
-
-func (a *ProductServiceImpl) GetByIdProduct(idProduct string, headers dto.Headers) (dto.Response, dto.ProductDto) {
-	var responseDto = dto.Response{}
-	var productDto = dto.ProductDto{}
-
-	products, err := a.productRepository.GetByIdProduct(idProduct, headers)
-	if err != nil {
-		responseDto.Status = http.StatusBadRequest
-		responseDto.Description = utils.StatusText(http.StatusBadRequest)
-		responseDto.Message = err.Error()
-		return responseDto, productDto
-	}
-
-	if products.Id == 0 || headers.IdMarket == "" {
-		responseDto.Status = http.StatusNotFound
-		responseDto.Description = utils.StatusText(http.StatusNotFound)
-		responseDto.Message = utils.Lenguage(headers.Lenguage, "NOT_FOUND_PRODUCT")
-		return responseDto, productDto
-	}
-
-	model.Copy(&productDto, products)
-	responseDto.Status = http.StatusOK
-	return responseDto, productDto
-}
-
-func (a *ProductServiceImpl) GetByQueryParameters(queryParameters dto.QueryParameters, headers dto.Headers) (dto.Response, []dto.ProductDto) {
-	var responseDto = dto.Response{}
-	var listProductDto = make([]dto.ProductDto, 0)
-	var result string = ""
-
-	if queryParameters.IdCategory == "" {
-		result = "NOT_FOUND_QUERY_IDCATEGORY"
-	}
-
-	if queryParameters.Price == "" {
-		result = "NOT_FOUND_QUERY_PRICE"
-	}
-
-	if queryParameters.Name == "" {
-		result = "NOT_FOUND_QUERY_NAME"
-	}
-
-	if result != "" {
-		responseDto.Status = http.StatusNotFound
-		responseDto.Description = utils.StatusText(http.StatusNotFound)
-		responseDto.Message = utils.Lenguage(headers.Lenguage, result)
-		return responseDto, listProductDto
-	}
-
-	products, err := a.productRepository.GetByQueryParameters(queryParameters, headers)
-	if err != nil {
-		responseDto.Status = http.StatusBadRequest
-		responseDto.Description = utils.StatusText(http.StatusBadRequest)
-		responseDto.Message = err.Error()
-		return responseDto, listProductDto
-	}
-
-	if len(products) == 0 || headers.IdMarket == "" {
-		responseDto.Status = http.StatusNotFound
-		responseDto.Description = utils.StatusText(http.StatusNotFound)
-		responseDto.Message = utils.Lenguage(headers.Lenguage, "NOT_FOUND_PRODUCT")
-		return responseDto, listProductDto
-	}
-
-	for _, product := range products {
-		var productDto = dto.ProductDto{}
-		model.Copy(&productDto, product)
-		listProductDto = append(listProductDto, productDto)
-	}
-
-	responseDto.Status = http.StatusOK
-	return responseDto, listProductDto
-}
-*/

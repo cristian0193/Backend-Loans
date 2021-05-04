@@ -11,4 +11,5 @@ type LoansRepository interface {
 	FindUserById(id int32) (entity.Loans, error)
 	UpdateCalculateById(id int32) error
 	FindAllLoans() ([]entity.Loans, error)
+	FindInformacionByIdLoan(idLoan int32) (entity.Loans, error)
 }

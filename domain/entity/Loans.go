@@ -13,6 +13,8 @@ type Loans struct {
 	IdStatus             int       `gorm:"TYPE:INT4;NOT NULL;COLUMN:id_status" json:"id_status"`
 	CreationDate         time.Time `gorm:"TYPE:DATE;NOT NULL;COLUMN:creation_date" json:"creation_date"`
 	Client               Clients   `gorm:"ForeignKey:identification_client;AssociationForeignKey:identification" json:"client"`
+	Interest             Interests `gorm:"ForeignKey:id_loan;AssociationForeignKey:id" json:"interest"`
+	State                Status    `gorm:"ForeignKey:id_status;AssociationForeignKey:id" json:"state"`
 }
 
 func (Loans) TableName() string {

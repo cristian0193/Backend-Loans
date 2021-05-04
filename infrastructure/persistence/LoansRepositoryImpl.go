@@ -110,64 +110,23 @@ func (repo *LoansRepositoryImpl) FindAllLoans() ([]entity.Loans, error) {
 	return loans, nil
 }
 
-/* func (repo *LoansRepositoryImpl) GetByIdMarket(headers dto.Headers) ([]entity.Product, error) {
+func (repo *LoansRepositoryImpl) FindInformacionByIdLoan(idLoan int32) (entity.Loans, error) {
 
-	var product = []entity.Product{}
+	var loans = entity.Loans{}
 
-	err := repo.db.Where("id_market = ?", headers.IdMarket).Find(&product).Error
-	if err != nil {
-		return product, err
+	err := repo.db.Where("id = ?", idLoan).
+		Preload("Client").
+		Preload("State").
+		Preload("Interest", func(db *gorm.DB) *gorm.DB {
+			return db.Where("status = 'ACT'")
+		}).
+		Find(&loans).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return loans, nil
 	}
-	return product, nil
+
+	if err != nil {
+		return loans, err
+	}
+	return loans, nil
 }
-
-func (repo *ProductRepositoryImpl) Update(productDto dto.ProductDto, headers dto.Headers) error {
-
-	var product = entity.Product{}
-
-	model.Copy(&product, productDto)
-	product.IdMarket = headers.IdMarket
-
-	err := repo.db.Save(&product).Error
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (repo *ProductRepositoryImpl) Delete(idProduct string, headers dto.Headers) error {
-
-	var product = entity.Product{}
-
-	err := repo.db.Where("id = ? and id_market = ?", idProduct, headers.IdMarket).Delete(&product).Error
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (repo *ProductRepositoryImpl) GetByIdProduct(idProduct string, headers dto.Headers) (entity.Product, error) {
-
-	var product = entity.Product{}
-
-	err := repo.db.Where("id = ? and id_market = ?", idProduct, headers.IdMarket).Find(&product).Error
-	if err != nil {
-		return product, err
-	}
-	return product, nil
-}
-
-func (repo *ProductRepositoryImpl) GetByQueryParameters(queryParameters dto.QueryParameters, headers dto.Headers) ([]entity.Product, error) {
-	var product = []entity.Product{}
-	queryFilterParameters := &queryParameters
-
-	var queryParameter = utils.FilterQueryParameters(queryFilterParameters)
-
-	var query = `SELECT id, name, price, id_category FROM public."Product" WHERE id_market = ? and ` + queryParameter
-
-	err := repo.db.Raw(query, headers.IdMarket).Find(&product).Error
-	if err != nil {
-		return product, err
-	}
-	return product, nil
-} */

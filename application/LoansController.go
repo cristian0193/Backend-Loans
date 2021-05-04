@@ -24,6 +24,7 @@ func InitLoansController(router *gin.Engine) {
 	router.POST("/loans/payment", loansRepository.CreatePaymentHandler)
 	router.GET("/loans", loansRepository.FindAllHandler)
 	router.GET("/loans/historial/:idLoan", loansRepository.FindByIdLoanHandler)
+	router.GET("/loans/information/client/:idLoan", loansRepository.FindInformationLoanHandler)
 }
 
 func HeadersParamLoans(c *gin.Context) dto.Headers {
@@ -100,85 +101,15 @@ func (a *LoansController) FindByIdLoanHandler(c *gin.Context) {
 	c.JSON(http.StatusAccepted, payments)
 }
 
-/* func (p *LoansController) GetAllProductHandler(c *gin.Context) {
-	var headers = HeadersParamProduct(c)
+func (a *LoansController) FindInformationLoanHandler(c *gin.Context) {
+	var headers = HeadersParamLoans(c)
+	var idLoan = utils.ConvertInt32(c.Param("idLoan"))
 
-	response, product := p.productService.GetByIdMarketProduct(headers)
-	if response.Status != http.StatusOK {
-		utils.Trace(serviceName, c, response.Status, response)
-		c.JSON(response.Status, response)
-		return
-	}
-	utils.Trace(serviceName, c, http.StatusOK, response)
-	c.JSON(http.StatusOK, product)
-}
-
-func (a *ProductController) UpdateProductHandler(c *gin.Context) {
-	var headers = HeadersParamProduct(c)
-	var productDto dto.ProductDto
-	var responseDto = dto.Response{}
-
-	if err := c.ShouldBindJSON(&productDto); err != nil {
-		responseDto.Status = http.StatusUnprocessableEntity
-		responseDto.Description = utils.StatusText(http.StatusUnprocessableEntity)
-		responseDto.Message = utils.Lenguage(headers.Lenguage, "BODY_INVALID")
-		c.JSON(http.StatusUnprocessableEntity, responseDto)
-		return
-	}
-
-	response := a.productService.UpdateProduct(productDto, headers)
-
-	if response.Status != http.StatusCreated {
-		utils.Trace(serviceName, c, response.Status, response)
-		c.JSON(response.Status, response)
-		return
-	}
-	utils.Trace(serviceName, c, http.StatusOK, response)
-	c.JSON(http.StatusAccepted, response)
-}
-
-func (a *ProductController) DeleteProductHandler(c *gin.Context) {
-	var headers = HeadersParamProduct(c)
-	var idProduct = c.Param("idProduct")
-
-	response := a.productService.DeleteProduct(idProduct, headers)
+	information, response := a.loansService.FindInformacionByLoan(idLoan, headers)
 
 	if response.Status != http.StatusOK {
-		utils.Trace(serviceName, c, response.Status, response)
 		c.JSON(response.Status, response)
 		return
 	}
-	utils.Trace(serviceName, c, http.StatusOK, response)
-	c.JSON(http.StatusAccepted, response)
+	c.JSON(http.StatusAccepted, information)
 }
-
-func (a *ProductController) GetByIdProductHandler(c *gin.Context) {
-	var headers = HeadersParamProduct(c)
-	var idProduct = c.Param("idProduct")
-
-	response, product := a.productService.GetByIdProduct(idProduct, headers)
-
-	if response.Status != http.StatusOK {
-		utils.Trace(serviceName, c, response.Status, response)
-		c.JSON(response.Status, response)
-		return
-	}
-	utils.Trace(serviceName, c, http.StatusOK, response)
-	c.JSON(http.StatusAccepted, product)
-}
-
-func (a *ProductController) GetByQueryParametersHandler(c *gin.Context) {
-	var headers = HeadersParamProduct(c)
-	var queryParameters = QueryParamProduct(c)
-
-	response, product := a.productService.GetByQueryParameters(queryParameters, headers)
-
-	if response.Status != http.StatusOK {
-		utils.Trace(serviceName, c, response.Status, response)
-		c.JSON(response.Status, response)
-		return
-	}
-	utils.Trace(serviceName, c, http.StatusOK, response)
-	c.JSON(http.StatusAccepted, product)
-}
-*/
