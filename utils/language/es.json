@@ -2,5 +2,6 @@
     "CREATED":  "Creación exitosa",
     "UPDATED":  "Actualización exitosa",
     "DELETE":   "Eliminación exitosa",
-    "USER_EXIST":   "El usuario presenta un prestamos en estado pendiente o en mora"
+    "USER_EXIST":   "El usuario presenta un prestamos en estado pendiente o en mora",
+    "ERROR_LOGIN" : "El usuario o contraseña no son correctos, intente nuevamente"
 }

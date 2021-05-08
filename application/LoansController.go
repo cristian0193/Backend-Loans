@@ -1,7 +1,7 @@
 package application
 
 import (
-	"Backend-Loans/business/service"
+	service "Backend-Loans/business/service/loans"
 	"Backend-Loans/domain/dto"
 	"Backend-Loans/utils"
 	"net/http"
@@ -9,8 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-var serviceName string
 
 type LoansController struct {
 	loansService service.LoansService
@@ -54,7 +52,7 @@ func (a *LoansController) CreateLoansHandler(c *gin.Context) {
 		c.JSON(response.Status, response)
 		return
 	}
-	c.JSON(http.StatusAccepted, response)
+	c.JSON(response.Status, response)
 }
 
 func (a *LoansController) CreatePaymentHandler(c *gin.Context) {
@@ -73,7 +71,7 @@ func (a *LoansController) CreatePaymentHandler(c *gin.Context) {
 		c.JSON(response.Status, response)
 		return
 	}
-	c.JSON(http.StatusAccepted, response)
+	c.JSON(response.Status, response)
 }
 
 func (a *LoansController) FindAllHandler(c *gin.Context) {
@@ -85,7 +83,7 @@ func (a *LoansController) FindAllHandler(c *gin.Context) {
 		c.JSON(response.Status, response)
 		return
 	}
-	c.JSON(http.StatusAccepted, loans)
+	c.JSON(response.Status, loans)
 }
 
 func (a *LoansController) FindByIdLoanHandler(c *gin.Context) {
@@ -98,7 +96,7 @@ func (a *LoansController) FindByIdLoanHandler(c *gin.Context) {
 		c.JSON(response.Status, response)
 		return
 	}
-	c.JSON(http.StatusAccepted, payments)
+	c.JSON(response.Status, payments)
 }
 
 func (a *LoansController) FindInformationLoanHandler(c *gin.Context) {
@@ -111,5 +109,5 @@ func (a *LoansController) FindInformationLoanHandler(c *gin.Context) {
 		c.JSON(response.Status, response)
 		return
 	}
-	c.JSON(http.StatusAccepted, information)
+	c.JSON(response.Status, information)
 }

@@ -15,6 +15,7 @@ type DbHelper struct {
 	LoansRepository     repository.LoansRepository
 	PaymentsRepository  repository.PaymentsRepository
 	InterestsRepository repository.InterestsRepository
+	UsersRepository     repository.UsersRepository
 	db                  *gorm.DB
 }
 
@@ -45,6 +46,7 @@ func InitDbHelper() (*DbHelper, error) {
 		LoansRepository:     persistence.InitLoansRepositoryImpl(db),
 		PaymentsRepository:  persistence.InitPaymentsRepositoryImpl(db),
 		InterestsRepository: persistence.InitInterestsRepositoryImpl(db),
+		UsersRepository:     persistence.InitUsersRepositoryImpl(db),
 		db:                  db,
 	}, nil
 }
@@ -54,5 +56,10 @@ func (s *DbHelper) Close() error {
 }
 
 func (s *DbHelper) Automigrate() error {
-	return s.db.AutoMigrate(&entity.Loans{}, &entity.Payments{}, &entity.Interests{}, &entity.Types{}).Error
+	return s.db.AutoMigrate(
+		&entity.Loans{},
+		&entity.Payments{},
+		&entity.Interests{},
+		&entity.Types{},
+		&entity.Users{}).Error
 }
