@@ -135,7 +135,8 @@ func (a *LoansServiceImpl) FindAllLoans(headers dto.Headers) ([]dto.ListLoansDto
 			PaidValue:     loan.PaidValue,
 			PendingValue:  loan.PendingValue,
 			InterestPaid:  loan.InterestPaid,
-			IdStatus:      loan.IdStatus,
+			IdStatus:      int(loan.State.Id),
+			Status:        loan.State.Description,
 		}
 
 		listLoans = append(listLoans, listLoansDto)

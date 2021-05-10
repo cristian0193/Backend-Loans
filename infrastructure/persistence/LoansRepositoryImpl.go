@@ -99,7 +99,7 @@ func (repo *LoansRepositoryImpl) UpdateCalculateById(id int32) error {
 func (repo *LoansRepositoryImpl) FindAllLoans() ([]entity.Loans, error) {
 	var loans = []entity.Loans{}
 
-	err := repo.db.Preload("Client").Find(&loans).Error
+	err := repo.db.Preload("Client").Preload("State").Find(&loans).Error
 	if gorm.IsRecordNotFoundError(err) {
 		return loans, nil
 	}

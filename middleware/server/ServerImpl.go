@@ -24,6 +24,8 @@ func InitServer() Server {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	application.InitLoansController(router)
 	application.InitUserController(router)
+	application.InitClientsController(router)
+	application.InitTypesController(router)
 	serverImpl.router = router
 	return serverImpl
 }

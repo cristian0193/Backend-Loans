@@ -9,4 +9,5 @@ type ListLoansDto struct {
 	PendingValue  float32 `json:"pendingValue"`
 	InterestPaid  float32 `json:"interestPaid"`
 	IdStatus      int     `json:"idStatus"`
+	Status        string  `json:"status"`
 }
