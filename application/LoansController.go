@@ -33,6 +33,7 @@ func HeadersParamLoans(c *gin.Context) dto.Headers {
 
 func QueryParamLoans(c *gin.Context) dto.QueryParameters {
 	var queryParameters = dto.QueryParameters{}
+	queryParameters.Pages = uint(utils.GetInt(c.Request.URL.Query().Get("page")))
 	return queryParameters
 }
 
@@ -76,8 +77,9 @@ func (a *LoansController) CreatePaymentHandler(c *gin.Context) {
 
 func (a *LoansController) FindAllHandler(c *gin.Context) {
 	var headers = HeadersParamLoans(c)
+	var query = QueryParamLoans(c)
 
-	loans, response := a.loansService.FindAllLoans(headers)
+	loans, response := a.loansService.FindAllLoans(query, headers)
 
 	if response.Status != http.StatusOK {
 		c.JSON(response.Status, response)

@@ -96,10 +96,18 @@ func (repo *LoansRepositoryImpl) UpdateCalculateById(id int32) error {
 	return nil
 }
 
-func (repo *LoansRepositoryImpl) FindAllLoans() ([]entity.Loans, error) {
+func (repo *LoansRepositoryImpl) FindAllLoans(page uint) ([]entity.Loans, error) {
 	var loans = []entity.Loans{}
 
-	err := repo.db.Preload("Client").Preload("State").Find(&loans).Error
+	limit := 6
+	pages := int(page-1) * limit
+
+	err := repo.db.Preload("Client").Preload("State").
+		Order("id DESC").
+		Offset(pages).
+		Limit(limit).
+		Find(&loans).Error
+
 	if gorm.IsRecordNotFoundError(err) {
 		return loans, nil
 	}
@@ -108,6 +116,23 @@ func (repo *LoansRepositoryImpl) FindAllLoans() ([]entity.Loans, error) {
 		return loans, err
 	}
 	return loans, nil
+}
+
+func (repo *LoansRepositoryImpl) CountAllLoans() (int, error) {
+
+	var countLoan int
+	query := `select count(*) as countLoan from "Loans"`
+
+	err := repo.db.Raw(query).Count(&countLoan).Error
+
+	if gorm.IsRecordNotFoundError(err) {
+		return countLoan, nil
+	}
+
+	if err != nil {
+		return countLoan, err
+	}
+	return countLoan, nil
 }
 
 func (repo *LoansRepositoryImpl) FindInformacionByIdLoan(idLoan int32) (entity.Loans, error) {

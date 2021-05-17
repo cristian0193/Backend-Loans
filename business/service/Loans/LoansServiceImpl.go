@@ -7,6 +7,7 @@ import (
 	"Backend-Loans/infrastructure/repository"
 	"Backend-Loans/utils"
 	"log"
+	"math"
 	"net/http"
 )
 
@@ -116,14 +117,15 @@ func (a *LoansServiceImpl) CreatePayment(paymentDto dto.PaymentDto, headers dto.
 	return utils.ResponseValidation(http.StatusCreated, headers, "CREATED")
 }
 
-func (a *LoansServiceImpl) FindAllLoans(headers dto.Headers) ([]dto.ListLoansDto, dto.Response) {
+func (a *LoansServiceImpl) FindAllLoans(query dto.QueryParameters, headers dto.Headers) (dto.ConsultLoanDto, dto.Response) {
 
 	var listLoans = make([]dto.ListLoansDto, 0)
+	var consultLoan = dto.ConsultLoanDto{}
 	var responseDto = dto.Response{}
 
-	loans, err := a.loansRepository.FindAllLoans()
+	loans, err := a.loansRepository.FindAllLoans(query.Pages)
 	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
-		return listLoans, response
+		return consultLoan, response
 	}
 
 	for _, loan := range loans {
@@ -142,8 +144,13 @@ func (a *LoansServiceImpl) FindAllLoans(headers dto.Headers) ([]dto.ListLoansDto
 		listLoans = append(listLoans, listLoansDto)
 	}
 
+	count, err := a.loansRepository.CountAllLoans()
+	totalDouble := float64(count) / float64(6)
+
+	consultLoan.Pages = int(math.Ceil(totalDouble))
+	consultLoan.Loans = listLoans
 	responseDto.Status = http.StatusOK
-	return listLoans, responseDto
+	return consultLoan, responseDto
 }
 
 func (a *LoansServiceImpl) FindByIdLoan(idLoan int32, headers dto.Headers) ([]dto.ListPaymentDto, dto.Response) {

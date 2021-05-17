@@ -10,6 +10,7 @@ type LoansRepository interface {
 	FindUserByUser(identification int32) (bool, error)
 	FindUserById(id int32) (entity.Loans, error)
 	UpdateCalculateById(id int32) error
-	FindAllLoans() ([]entity.Loans, error)
+	FindAllLoans(page uint) ([]entity.Loans, error)
 	FindInformacionByIdLoan(idLoan int32) (entity.Loans, error)
+	CountAllLoans() (int, error)
 }
