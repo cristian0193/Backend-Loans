@@ -34,6 +34,7 @@ func HeadersParamLoans(c *gin.Context) dto.Headers {
 func QueryParamLoans(c *gin.Context) dto.QueryParameters {
 	var queryParameters = dto.QueryParameters{}
 	queryParameters.Pages = uint(utils.GetInt(c.Request.URL.Query().Get("page")))
+	queryParameters.Identification = c.Request.URL.Query().Get("identification")
 	return queryParameters
 }
 

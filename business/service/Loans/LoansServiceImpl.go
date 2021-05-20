@@ -123,7 +123,7 @@ func (a *LoansServiceImpl) FindAllLoans(query dto.QueryParameters, headers dto.H
 	var consultLoan = dto.ConsultLoanDto{}
 	var responseDto = dto.Response{}
 
-	loans, err := a.loansRepository.FindAllLoans(query.Pages)
+	loans, err := a.loansRepository.FindAllLoans(query)
 	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
 		return consultLoan, response
 	}
@@ -148,6 +148,11 @@ func (a *LoansServiceImpl) FindAllLoans(query dto.QueryParameters, headers dto.H
 	totalDouble := float64(count) / float64(6)
 
 	consultLoan.Pages = int(math.Ceil(totalDouble))
+
+	if query.Identification != "" {
+		consultLoan.Pages = 1
+	}
+
 	consultLoan.Loans = listLoans
 	responseDto.Status = http.StatusOK
 	return consultLoan, responseDto

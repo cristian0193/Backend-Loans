@@ -1,5 +1,6 @@
 package dto
 
 type QueryParameters struct {
-	Pages uint `json:"pages"`
+	Pages          uint   `json:"pages"`
+	Identification string `json:"identification"`
 }
