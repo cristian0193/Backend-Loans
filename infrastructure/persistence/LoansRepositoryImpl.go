@@ -96,22 +96,24 @@ func (repo *LoansRepositoryImpl) UpdateCalculateById(id int32) error {
 	return nil
 }
 
-func (repo *LoansRepositoryImpl) FindAllLoans(query dto.QueryParameters) ([]entity.Loans, error) {
+func (repo *LoansRepositoryImpl) FindAllLoan(query dto.QueryParameters) ([]entity.Loans, error) {
 	var loans = []entity.Loans{}
 	var err error
 
 	limit := 6
 	pages := int(query.Pages-1) * limit
 
-	if query.Identification != "" {
-		err = repo.db.Where("identification_client = ?", query.Identification).
+	if query.Fullname != "" {
+		err = repo.db.Joins(`inner join "Clients" on "Clients".identification = "Loans".identification_client`).
+			Where(`"Loans".id_status = ? and "Clients".fullname like ?`, query.Status, ("%" + query.Fullname + "%")).
 			Preload("Client").Preload("State").
 			Order("id DESC").
 			Offset(0).
 			Limit(limit).
 			Find(&loans).Error
 	} else {
-		err = repo.db.Preload("Client").Preload("State").
+		err = repo.db.Where(`id_status = ?`, query.Status).
+			Preload("Client").Preload("State").
 			Order("id DESC").
 			Offset(pages).
 			Limit(limit).
@@ -128,12 +130,12 @@ func (repo *LoansRepositoryImpl) FindAllLoans(query dto.QueryParameters) ([]enti
 	return loans, nil
 }
 
-func (repo *LoansRepositoryImpl) CountAllLoans() (int, error) {
+func (repo *LoansRepositoryImpl) CountAllLoans(status uint) (int, error) {
 
 	var countLoan int
-	query := `select count(*) as countLoan from "Loans"`
+	query := `select count(*) as countLoan from "Loans" where id_status = ?`
 
-	err := repo.db.Raw(query).Count(&countLoan).Error
+	err := repo.db.Raw(query, status).Count(&countLoan).Error
 
 	if gorm.IsRecordNotFoundError(err) {
 		return countLoan, nil

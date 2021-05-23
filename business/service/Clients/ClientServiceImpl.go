@@ -49,3 +49,46 @@ func (a *ClientServiceImpl) FindAll() ([]dto.ClientsDto, dto.Response) {
 	responseDto.Status = http.StatusOK
 	return listClient, responseDto
 }
+
+func (a *ClientServiceImpl) FindById(id int32) (dto.ClientsDto, dto.Response) {
+
+	var client = dto.ClientsDto{}
+	var responseDto = dto.Response{}
+
+	clients, err := a.clientsRepository.FindById(id)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return client, response
+	}
+
+	client.Identification = clients.Identification
+	client.FullName = clients.FullName
+	client.Address = clients.Address
+	client.Mobile = clients.Mobile
+
+	responseDto.Status = http.StatusOK
+	return client, responseDto
+}
+
+func (a *ClientServiceImpl) Create(clientDto dto.ClientsDto, headers dto.Headers) dto.Response {
+
+	if clientDto.Identification == 0 {
+		return utils.ResponseValidation(http.StatusNotFound, headers, "CLIENT_NOT_EXIST")
+	}
+
+	err := a.clientsRepository.Create(clientDto)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
+	}
+
+	return utils.ResponseValidation(http.StatusCreated, headers, "CREATED")
+}
+
+func (a *ClientServiceImpl) Update(clientDto dto.ClientsDto, headers dto.Headers) dto.Response {
+
+	err := a.clientsRepository.Update(clientDto)
+	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
+		return response
+	}
+
+	return utils.ResponseValidation(http.StatusCreated, headers, "UPDATED")
+}

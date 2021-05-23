@@ -117,13 +117,13 @@ func (a *LoansServiceImpl) CreatePayment(paymentDto dto.PaymentDto, headers dto.
 	return utils.ResponseValidation(http.StatusCreated, headers, "CREATED")
 }
 
-func (a *LoansServiceImpl) FindAllLoans(query dto.QueryParameters, headers dto.Headers) (dto.ConsultLoanDto, dto.Response) {
+func (a *LoansServiceImpl) FindAllLoan(query dto.QueryParameters, headers dto.Headers) (dto.ConsultLoanDto, dto.Response) {
 
 	var listLoans = make([]dto.ListLoansDto, 0)
 	var consultLoan = dto.ConsultLoanDto{}
 	var responseDto = dto.Response{}
 
-	loans, err := a.loansRepository.FindAllLoans(query)
+	loans, err := a.loansRepository.FindAllLoan(query)
 	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {
 		return consultLoan, response
 	}
@@ -144,12 +144,12 @@ func (a *LoansServiceImpl) FindAllLoans(query dto.QueryParameters, headers dto.H
 		listLoans = append(listLoans, listLoansDto)
 	}
 
-	count, err := a.loansRepository.CountAllLoans()
+	count, err := a.loansRepository.CountAllLoans(query.Status)
 	totalDouble := float64(count) / float64(6)
 
 	consultLoan.Pages = int(math.Ceil(totalDouble))
 
-	if query.Identification != "" {
+	if query.Fullname != "" {
 		consultLoan.Pages = 1
 	}
 
