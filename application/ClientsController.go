@@ -1,7 +1,7 @@
 package application
 
 import (
-	service "Backend-Loans/business/service/clients"
+	service "Backend-Loans/business/service"
 	"Backend-Loans/domain/dto"
 	"Backend-Loans/utils"
 	"net/http"
