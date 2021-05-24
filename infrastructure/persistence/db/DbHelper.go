@@ -30,10 +30,13 @@ func InitDbHelper() (*DbHelper, error) {
 	var dbname = utils.GetStrEnv("DB_NAME")
 	var drive = utils.GetStrEnv("DB_DRIVER")
 
-	/* psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require",
-	host, port, user, password, dbname) */
+	// Heroku
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require",
 		host, port, user, password, dbname)
+
+	// Local
+	/* psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require",
+	host, port, user, password, dbname) */
 	db, err := gorm.Open(drive, psqlInfo)
 
 	if err != nil {
