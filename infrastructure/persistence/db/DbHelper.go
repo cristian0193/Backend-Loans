@@ -23,19 +23,19 @@ type DbHelper struct {
 
 func InitDbHelper() (*DbHelper, error) {
 
-	var host = utils.GetStrEnv("DB_HOST")
-	var port = utils.GetIntEnv("DB_PORT")
-	var user = utils.GetStrEnv("DB_USER")
-	var password = utils.GetStrEnv("DB_PASSWORD")
-	var dbname = utils.GetStrEnv("DB_NAME")
-	var drive = utils.GetStrEnv("DB_DRIVER")
+	var host = utils.GetEnv("DB_HOST", "localhost")
+	var port = utils.GetEnv("DB_PORT", "5432")
+	var user = utils.GetEnv("DB_USER", "postgres")
+	var password = utils.GetEnv("DB_PASSWORD", "mysecretpassword")
+	var dbname = utils.GetEnv("DB_NAME", "postgres")
+	var drive = utils.GetEnv("DB_DRIVER", "postgres")
 
 	// Heroku
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require",
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
 		host, port, user, password, dbname)
 
 	// Local
-	/* psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	/* psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 	host, port, user, password, dbname) */
 	db, err := gorm.Open(drive, psqlInfo)
 
