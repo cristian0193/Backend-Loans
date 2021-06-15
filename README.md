@@ -50,9 +50,18 @@ WS_BaseLine_Golang
     - Visual Studio Code
 
 # Endpoints
-    - GET    /loans
-    - POST   /loans
-    - POST   /loans/payment
+    - GET    /swagger/*any             
+    - POST   /loans                    
+    - POST   /loans/payment            
+    - GET    /loans                    
+    - GET    /loans/historial/:idLoan  
+    - GET    /loans/information/:idLoan
+    - POST   /users                    
+    - GET    /clients                  
+    - GET    /clients/:id              
+    - POST   /clients                  
+    - PUT    /clients                  
+    - GET    /types                    
 
 # Authors
 Christian Rodriguez

@@ -54,7 +54,7 @@ func (a *LoansServiceImpl) CreateLoan(loansDto dto.LoansDto, headers dto.Headers
 	}
 
 	var calculate = (loansDto.BorrowedValue) * (loansDto.InterestPercentage / 100)
-	var interest = dto.InterestsDto{IdLoan: id, Status: "ACT", Share: calculate}
+	var interest = dto.InterestsDto{IdLoan: id, Status: "ACT", Share: float32(utils.ToFixed(float64(calculate), 0))}
 
 	err = a.interestsRepository.Insert(interest)
 	if response := utils.ResponseError(http.StatusBadRequest, err); response.Status != http.StatusOK {

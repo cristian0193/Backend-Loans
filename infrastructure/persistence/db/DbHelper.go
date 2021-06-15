@@ -35,7 +35,7 @@ func InitDbHelper() (*DbHelper, error) {
 		host, port, user, password, dbname)
 
 	// Local
-	/* psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require",
+	/* psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 	host, port, user, password, dbname) */
 	db, err := gorm.Open(drive, psqlInfo)
 

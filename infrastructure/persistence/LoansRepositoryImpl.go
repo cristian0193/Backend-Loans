@@ -19,11 +19,14 @@ func InitLoansRepositoryImpl(db *gorm.DB) *LoansRepositoryImpl {
 
 func (repo *LoansRepositoryImpl) Insert(loansDto dto.LoansDto) (int32, error) {
 
+	layOut := "2006-01-02"
 	var loans = entity.Loans{}
+
+	dateStamp, _ := time.Parse(layOut, loansDto.CreationDate)
 
 	model.Copy(&loans, loansDto)
 	loans.IdStatus = 2
-	loans.CreationDate = time.Now()
+	loans.CreationDate = dateStamp
 
 	err := repo.db.Create(&loans).Error
 	if err != nil {

@@ -19,10 +19,13 @@ func InitPaymentsRepositoryImpl(db *gorm.DB) *PaymentsRepositoryImpl {
 
 func (repo *PaymentsRepositoryImpl) Insert(paymentDto dto.PaymentDto) error {
 
+	layOut := "2006-01-02"
 	var payment = entity.Payments{}
 
+	dateStamp, _ := time.Parse(layOut, paymentDto.PaymentDate)
+
 	model.Copy(&payment, paymentDto)
-	payment.PaymentDate = time.Now()
+	payment.PaymentDate = dateStamp
 
 	err := repo.db.Create(&payment).Error
 	if err != nil {
